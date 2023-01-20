@@ -19,21 +19,22 @@ def main():
                 continue
             split_audio(audio, file_name)
     if args.input:
-        files = [f for f in os.listdir(args.all) if f.endswith(".mp3")]
+        files = [f for f in os.listdir(args.input) if f.endswith(".mp3")]
         print(f"Found {len(list(files))} files, named {files}")
         for file in files:
-            print(f"Processing {args.all}/{file}")
-            audio = pydub.AudioSegment.from_file(f"{args.all}/{file}")
+            print(f"Processing {args.input}/{file}")
+            audio = pydub.AudioSegment.from_file(f"{args.input}/{file}")
             file_name = os.path.basename(file).split(".")[0]
             split_audio(audio, file_name)
         exit(0)
     
 def split_audio(audio, name: str):
     number_of_chunks = get_chunk_number(audio)
+    audio = audio.set_channels(1)
     export_path = pathlib.Path(f"{args.output}") if args.output else pathlib.Path(os.getcwd())
     for i in range(number_of_chunks):
         chunk = audio[i * len(audio) // number_of_chunks:(i + 1) * len(audio) // number_of_chunks]
-        chunk.export(f"{export_path}/{name}_{i+1:02d}.mp3", format="mp3")
+        chunk.export(f"{export_path}/{name}_{i+1:02d}.mp3", format="mp3", bitrate="32k")
 
 def get_chunk_number(audio: pydub.AudioSegment) -> int:
     if args.number:
