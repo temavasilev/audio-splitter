@@ -2,6 +2,7 @@ import pydub
 import argparse
 import pathlib
 import os
+import regex as re
 
 
 def main():
@@ -18,6 +19,22 @@ def main():
                 print(f"{file} is not an audio file!")
                 continue
             split_audio(audio, file_name)
+
+    if args.regexquery:
+        for file in os.listdir():
+            if re.search(args.regexquery, file):
+                print(f"Processing {file}")
+                try:
+                    audio = pydub.AudioSegment.from_file(file)
+                    file_name = os.path.basename(file).split(".")[0]
+                except FileNotFoundError:
+                    print(f"{file} not found!")
+                    continue
+                except pydub.exceptions.CouldntDecodeError:
+                    print(f"{file} is not an audio file!")
+                    continue
+                split_audio(audio, file_name)
+
     if args.input:
         files = [f for f in os.listdir(args.input) if f.endswith(".mp3")]
         print(f"Found {len(list(files))} files, named {files}")
@@ -56,6 +73,7 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--directory", help="Path to directory")
     parser.add_argument("-n", "--number", help="Number of chunks", type=int)
     parser.add_argument("-o", "--output", help="Path to output directory")
+    parser.add_argument("-r", "--regexquery", help="Regex to match audio files")
     args = parser.parse_args()
     if args.number and args.number < 1:
         print("Number of chunks must be greater than 0")
