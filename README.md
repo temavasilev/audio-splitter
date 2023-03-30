@@ -36,7 +36,8 @@ python audio_splitter/main.py input_file.mp3 output_dir --chunk_length 600000 --
 ```
 
 Split an audio file based on silence, ensuring that the chunks are at least 5 minutes long:
-```python audio_splitter/main.py input_file.mp3 output_dir --silence_based
+```bash
+python audio_splitter/main.py input_file.mp3 output_dir --silence_based
 ```
 
 Split an audio file based on silence, ensuring that the chunks are at least 10 minutes long:
